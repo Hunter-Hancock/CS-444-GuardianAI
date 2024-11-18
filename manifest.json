@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "GuardianAI",
+  "version": "1.0",
+  "description": "Designed to enhance online safety for adolescents by detecting and flagging harmful or toxic content.",
+ "content_scripts": [
+   {
+     "matches": ["https://*/*"],
+     "js": ["scripts/content.js"]
+   }
+ ]
+}
