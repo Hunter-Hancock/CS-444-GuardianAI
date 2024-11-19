@@ -1,6 +1,10 @@
-const h1 = document.createElement("h1")
-h1.textContent = "FROM EXTENSION"
+async function testResponse() {
+  chrome.runtime.sendMessage(
+    {
+      contentScriptQuery: 'test',
+    },
+    response => console.log(response)
+  );
+}
 
-const body = document.querySelector("body")
-
-body.appendChild(h1)
+testResponse()
