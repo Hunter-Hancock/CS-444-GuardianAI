@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -8,7 +8,8 @@ app.config["ENV"] = "production"
 
 @app.route("/")
 def home():
-    return {"message": "Api Running"}
+    text = request.args.get("text")
+    return {"message": f"You sent: {text}"}
 
 
 if __name__ == "__main__":
