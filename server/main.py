@@ -9,6 +9,7 @@ app.config["ENV"] = "production"
 @app.route("/")
 def home():
     text = request.args.get("text")
+    text = text.replace("%20", " ")
     return {"message": f"You sent: {text}"}
 
 
