@@ -1,25 +1,59 @@
-async function testResponse() {
-  const text = $("body").text()
-  chrome.runtime.sendMessage(
-    {
-      contentScriptQuery: 'test',
-      text: text
-    },
-    response => highlight(response.text)
-  );
-}
+const observer = new MutationObserver(() => {
+  const emailBody = document.querySelector('div[aria-label="Message Body"]');
 
-testResponse()
+  if (emailBody) {
+    let delay
+    emailBody.addEventListener("input", () => {
+      clearTimeout(delay)
+      delay = setTimeout(() => {
+        console.log(emailBody.innerText)
 
-function highlight(text) {
-  console.log(text)
-  $("body p").contents().each(function() {
-    if (this.textContent.includes(text)) {
-      const span = $('<span style="background-color: yellow; color: red;"></span>')
-      span.text(this.textContent)
+        chrome.runtime.sendMessage(
+          {
+            contentScriptQuery: 'test',
+            text: emailBody.innerText
+          },
+          response => highlight(response)
+        );
+      }, 500)
+    });
 
-      $(this).replaceWith(span)
-    }
+    observer.disconnect();
+  }
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
+
+function highlight(response) {
+  const emailBody = document.querySelector('div[aria-label="Message Body"]');
+
+  const threshold = 0.50;
+
+  const parts = emailBody.innerText.split(" ")
+
+  const highlightedWords = parts.map((word) => {
+    const predictions = response.predictions[word]
+
+    const isToxic = Object.values(predictions).some(value => value > threshold);
+
+    const filtered = Object.entries(predictions).filter(([_, value]) => value[0] > threshold).map(([key, value]) => ({ key, value: value[0] }))
+
+    const labels = filtered.map(pred => `${pred.key}: ${pred.value.toFixed(2) * 100}%`)
+
+    return isToxic ? `<span id="toxic-word" data-tooltip="${labels.join(", ")}">${word}</span>` : word
   })
-}
 
+  const newText = highlightedWords.join(" ")
+
+  emailBody.innerHTML = newText
+
+  const selection = window.getSelection();
+  const range = document.createRange();
+
+  range.selectNodeContents(emailBody);
+
+  range.collapse(false);
+
+  selection.removeAllRanges();
+  selection.addRange(range);
+}

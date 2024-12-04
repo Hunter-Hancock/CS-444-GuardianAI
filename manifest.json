@@ -12,6 +12,9 @@
       "matches": [
         "https://*/*"
       ],
+      "css": [
+        "styles.css"
+      ],
       "js": [
         "scripts/jquery-3.7.1.min.js",
         "scripts/content.js"
