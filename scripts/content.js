@@ -40,7 +40,7 @@ function highlight(response) {
 
     const labels = filtered.map(pred => `${pred.key}: ${pred.value.toFixed(2) * 100}%`)
 
-    return isToxic ? `<span id="toxic-word" data-tooltip="${labels.join(", ")}">${word}</span>` : word
+    return isToxic ? `<span id="toxic-word" contenteditable="false" data-tooltip="${labels.join(", ")}">${word}</span>` : word
   })
 
   const newText = highlightedWords.join(" ")

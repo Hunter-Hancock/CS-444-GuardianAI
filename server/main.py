@@ -16,6 +16,8 @@ def home():
     data = request.get_json()
     text = data.get("text", "")
 
+    print(text)
+
     words = text.split()
 
     predictions = {}
