@@ -29,7 +29,7 @@ function highlight(response) {
 
   const threshold = 0.50;
 
-  const parts = emailBody.innerText.split(" ")
+  const parts = emailBody.innerText.split(/\s|&nbsp;/g)
 
   const highlightedWords = parts.map((word) => {
     const predictions = response.predictions[word]
@@ -40,7 +40,7 @@ function highlight(response) {
 
     const labels = filtered.map(pred => `${pred.key}: ${pred.value.toFixed(2) * 100}%`)
 
-    return isToxic ? `<span id="toxic-word" contenteditable="false" data-tooltip="${labels.join(", ")}">${word}</span>` : word
+    return isToxic ? `<span class="toxic-word" contenteditable="false" data-tooltip="${labels.join(", ")}">${word}</span>` : word
   })
 
   const newText = highlightedWords.join(" ")
